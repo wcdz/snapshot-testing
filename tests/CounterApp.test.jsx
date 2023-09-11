@@ -1,19 +1,55 @@
-import { render, screen } from "@testing-library/react";
-import { CounterApp } from "../src/CounterApp"
+import { render, fireEvent } from "@testing-library/react";
+import { CounterApp } from "../src/CounterApp";
 
-
-describe('Pruebas en <CounterApp />', () => {
-
-    const initialValue = 100;
+describe('Pruebas de Snapshot en <CounterApp />', () => {
+    const initialValue = 10;
 
     test('Debe hacer match con el snapshot', () => {
+        const valorFalla = 100;
         const { container } = render(<CounterApp value={initialValue} />);
         expect(container).toMatchSnapshot();
     });
 
-    test('Debe de mostrar el valor inicial de 100 <CounterApp value={100}/>', () => {
-        render(<CounterApp value={initialValue} />);
-        expect(screen.getByText(initialValue)).toBeTruthy();
+    test('Debe hacer match con el snapshot con valor sin definir', () => {
+        const { container, getByText } = render(<CounterApp />);
+        const h2Element = getByText('No se envió/definió el value');
+        expect(h2Element).toBeInTheDocument();
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Debe hacer match con el snapshot después de hacer clic en +1', () => {
+        const { container, getByText } = render(<CounterApp value={initialValue} />);
+        const incrementButton = getByText('+1');
+        fireEvent.click(incrementButton);
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Debe hacer match con el snapshot después de hacer clic en -1', () => {
+        const { container, getByText } = render(<CounterApp value={initialValue} />);
+        const decrementButton = getByText('-1');
+        fireEvent.click(decrementButton);
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Debe hacer match con el snapshot después de hacer clic en Reset', () => {
+        const { container, getByLabelText } = render(<CounterApp value={initialValue} />);
+        const resetButton = getByLabelText('btn-reset');
+        fireEvent.click(resetButton);
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Debe hacer match con el snapshot después de múltiples interacciones', () => {
+        const { container, getByText, getByLabelText } = render(<CounterApp value={initialValue} />);
+        const incrementButton = getByText('+1');
+        const decrementButton = getByText('-1');
+        const resetButton = getByLabelText('btn-reset');
+
+        fireEvent.click(incrementButton);
+        fireEvent.click(decrementButton);
+        fireEvent.click(incrementButton);
+        fireEvent.click(resetButton);
+
+        expect(container).toMatchSnapshot();
     });
 
 });
