@@ -5,8 +5,8 @@ describe('Pruebas de Snapshot en <CounterApp />', () => {
     const initialValue = 10;
 
     test('Debe hacer match con el snapshot', () => {
-        const valorFalla = 100;
-        const { container } = render(<CounterApp value={valorFalla} />);
+        const valorFalla = Number.MAX_SAFE_INTEGER;
+        const { container } = render(<CounterApp value={initialValue} />);
         expect(container).toMatchSnapshot();
     });
 
